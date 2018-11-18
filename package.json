@@ -1,6 +1,6 @@
 {
   "name": "wood-httpserver",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/jlego/wood-httpserver/issues"
   },
-  "homepage": "https://github.com/jlego/wood-httpserver#readme"
+  "homepage": "https://github.com/jlego/wood-httpserver#readme",
+  "dependencies": {
+    "cluster": "^0.7.7"
+  }
 }
