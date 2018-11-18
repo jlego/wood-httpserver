@@ -21,21 +21,7 @@ module.exports = (app, config = {}) => {
     }
   });
 
-  const cpuNums = app.config.cluster.cpus <= 0 ? require('os').cpus().length : app.config.cluster.cpus;
-  if (cluster.isMaster) {
-    for (let i = 0; i < cpuNums; i++) {
-      cluster.fork();
-    }
-    cluster.on('disconnect', (worker) => {
-      console.log(`The worker #${worker.id} has disconnected`);
-      worker.kill();
-    });
-    cluster.on('exit', (worker, code, signal) => {
-      console.log('worker %d died (%s). restarting...', worker.process.pid, signal || code);
-      cluster.fork();
-    });
-  } else {
-    console.log('The slaver[' + cluster.worker.id + ']');
+  function startServer(){
     if(config.http){
       const httpServer = http.createServer(app.application)
         .listen(config.http.port, () => {
@@ -54,6 +40,27 @@ module.exports = (app, config = {}) => {
         }
       );
     }
+  }
+  const cpuNums = app.config.cluster.cpus <= 0 ? require('os').cpus().length : app.config.cluster.cpus;
+  if(app.config.cluster.cpus > 1){
+    if (cluster.isMaster) {
+      for (let i = 0; i < cpuNums; i++) {
+        cluster.fork();
+      }
+      cluster.on('disconnect', (worker) => {
+        console.log(`The worker #${worker.id} has disconnected`);
+        worker.kill();
+      });
+      cluster.on('exit', (worker, code, signal) => {
+        console.log('worker %d died (%s). restarting...', worker.process.pid, signal || code);
+        cluster.fork();
+      });
+    } else {
+      console.log('The slaver[' + cluster.worker.id + ']');
+      startServer();
+    }
+  }else{
+    startServer();
   }
   return app;
 }
