@@ -7,7 +7,7 @@ const cluster = require('cluster');
 const http = require('http');
 const https = require('https');
 
-module.exports = (app, config = {}) => {
+module.exports = (app = {}, config = {}) => {
   // 返回错误信息
   app.use(function (err, req, res, next) {
     if (err) {
