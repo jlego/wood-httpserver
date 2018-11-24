@@ -8,22 +8,12 @@ const http = require('http');
 const https = require('https');
 
 module.exports = (app = {}, config = {}) => {
-  // 返回错误信息
-  app.use(function (err, req, res, next) {
-    if (err) {
-      res.status(err.status || 500);
-      if(res.print) {
-        res.print(error(err));
-      }else{
-        res.json(error(err));
-      }
-      return;
-    }
-  });
+  let httpServer = null,
+    httpsServer = null;
 
   function startServer(){
     if(config.http){
-      const httpServer = http.createServer(app.application)
+      httpServer = http.createServer(app.application)
         .listen(config.http.port, () => {
           let host = httpServer.address().address;
           let port = httpServer.address().port;
@@ -32,7 +22,7 @@ module.exports = (app = {}, config = {}) => {
       );
     }
     if(config.https){
-      const httpsServer = https.createServer(config.https.options || {}, app.application)
+      httpsServer = https.createServer(config.https.options || {}, app.application)
         .listen(config.https.port, () => {
           let host = httpsServer.address().address;
           let port = httpsServer.address().port;
