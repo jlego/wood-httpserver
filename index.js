@@ -20,6 +20,7 @@ module.exports = (app = {}, config = {}) => {
           console.log('http server running at http://' + host + ':' + port);
         }
       );
+    app.application.set('httpServer', httpServer);
     }
     if(config.https){
       httpsServer = https.createServer(config.https.options || {}, app.application).listen(config.https.port, () => {
@@ -29,6 +30,7 @@ module.exports = (app = {}, config = {}) => {
         }
       );
     }
+    app.application.set('httpsServer', httpsServer);
   }
   const cpuNums = app.config.cluster.cpus <= 0 ? require('os').cpus().length : app.config.cluster.cpus;
 
